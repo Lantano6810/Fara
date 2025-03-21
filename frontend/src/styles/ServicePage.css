@@ -1,0 +1,8 @@
+.service-page .navbar {
+    background-color: #132043; /* Цвет фона */
+    height: 75px;
+}
+.service-container {
+    margin-top: 20px; /* Оставляем место под Header */
+    padding: 20px;
+}
