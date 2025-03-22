@@ -201,7 +201,12 @@ const ServiceApplications = () => {
                 )
             )}
 
-            <Modal isOpen={isModalOpen} onClose={handleCloseModal} onConfirm={handleConfirmBooking} />
+            <Modal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmBooking}
+                selectedDate={selectedDate.toISOString().split("T")[0]}
+            />
         </div>
     );
 };

@@ -21,13 +21,17 @@ const SeeServicePhoto = () => {
             try {
                 const response = await fetch(`http://localhost:3001/minio/photos/${serviceId}`);
                 const data = await response.json();
-                if (Array.isArray(data)) {
+                if (Array.isArray(data) && data.length > 0) {
                     setPhotos(data);
-                    setSelectedPhoto(data[0]?.url || "");
+                    setSelectedPhoto(data[0].url);
                     setCurrentIndex(0);
+                } else {
+                    setPhotos([]);
+                    setSelectedPhoto("");
                 }
             } catch (err) {
                 console.error("Ошибка загрузки фото:", err);
+                setPhotos([]);
             }
         };
 
@@ -50,32 +54,38 @@ const SeeServicePhoto = () => {
 
     return (
         <div className="photo-viewer-container">
-            {selectedPhoto && (
-                <div className="main-photo-wrapper">
-                    <button className="nav-button outside left" onClick={goToPrevPhoto}>◀</button>
+            {photos.length === 0 ? (
+                <p className="no-photos-message">Фото автосервиса отсутствуют</p>
+            ) : (
+                <>
+                    {selectedPhoto && (
+                        <div className="main-photo-wrapper">
+                            <button className="nav-button outside left" onClick={goToPrevPhoto}>◀</button>
 
-                    <div className="main-photo-box">
-                        <img src={selectedPhoto} alt="Selected" className="main-photo" />
+                            <div className="main-photo-box">
+                                <img src={selectedPhoto} alt="Selected" className="main-photo" />
+                            </div>
+
+                            <button className="nav-button outside right" onClick={goToNextPhoto}>▶</button>
+                        </div>
+                    )}
+
+                    <div className="thumbnail-container">
+                        {photos.map((photo, index) => (
+                            <img
+                                key={photo.id}
+                                src={photo.url}
+                                alt="Thumbnail"
+                                className={`thumbnail ${selectedPhoto === photo.url ? "active" : ""}`}
+                                onClick={() => {
+                                    setSelectedPhoto(photo.url);
+                                    setCurrentIndex(index);
+                                }}
+                            />
+                        ))}
                     </div>
-
-                    <button className="nav-button outside right" onClick={goToNextPhoto}>▶</button>
-                </div>
+                </>
             )}
-
-            <div className="thumbnail-container">
-                {photos.map((photo, index) => (
-                    <img
-                        key={photo.id}
-                        src={photo.url}
-                        alt="Thumbnail"
-                        className={`thumbnail ${selectedPhoto === photo.url ? "active" : ""}`}
-                        onClick={() => {
-                            setSelectedPhoto(photo.url);
-                            setCurrentIndex(index);
-                        }}
-                    />
-                ))}
-            </div>
         </div>
     );
 };

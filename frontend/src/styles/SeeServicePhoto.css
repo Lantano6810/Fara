@@ -85,3 +85,11 @@
 .nav-button:hover {
     background-color: #12758F;
 }
+
+
+.no-photos-message {
+    text-align: center;
+    font-size: 18px;
+    color: white;
+    margin-top: 20px;
+}
