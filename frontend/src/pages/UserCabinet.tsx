@@ -1,8 +1,12 @@
+import UserData from "../components/UserData";
+import ServiceBook from "../components/ServiceBook"; // убедись, что путь правильный
+
 const UserCabinet = () => {
     return (
-        <div>
-            <h2>Личный кабинет</h2>
-            <p>Здесь будет информация о пользователе.</p>
+        <div style={{ padding: "20px" }}>
+            <UserData />
+            <hr style={{ margin: "40px 0" }} />
+            <ServiceBook />
         </div>
     );
 };

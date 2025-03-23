@@ -73,7 +73,21 @@ export class ApplicationsService {
     async findByServiceId(serviceId: number): Promise<Application[]> {
         return this.applicationsRepository.find({
             where: {
-                service: { service_id: serviceId }, // ⬅️ правильно
+                service: { service_id: serviceId },
+            },
+            relations: ['user', 'service'],
+            order: {
+                appointment_date: 'DESC',
+                created_time: 'DESC',
+            },
+        });
+    }
+
+    // ✅ Получить все заявки по ID пользователя
+    async findByUserId(userId: number): Promise<Application[]> {
+        return this.applicationsRepository.find({
+            where: {
+                user: { id: userId },
             },
             relations: ['user', 'service'],
             order: {

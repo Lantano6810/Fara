@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    ConflictException,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
@@ -39,7 +44,7 @@ export class UsersService {
 
         if (savedUser.role === 'service') {
             const serviceData: CreateServiceDto = {
-                user_id: savedUser.id, // Передаём ID пользователя вместо объекта
+                user_id: savedUser.id,
                 service_name: '',
                 about: '',
                 city: '',
@@ -107,19 +112,41 @@ export class UsersService {
         return user;
     }
 
-    async updatePassword(id: number, oldPassword: string, newPassword: string): Promise<Omit<User, 'password'>> {
+    async updatePassword(
+        id: number,
+        oldPassword: string,
+        newPassword: string
+    ): Promise<Omit<User, 'password'>> {
         const user = await this.usersRepository.findOne({ where: { id } });
         if (!user) {
             throw new NotFoundException(`Пользователь с id ${id} не найден`);
         }
+
         const isOldPasswordValid = await bcrypt.compare(oldPassword, user.password);
         if (!isOldPasswordValid) {
             throw new UnauthorizedException('Старый пароль неверный');
         }
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
         await this.usersRepository.update(id, { password: hashedPassword });
+
         const { password, ...userWithoutPassword } = await this.usersRepository.findOne({ where: { id } }) as User;
         return userWithoutPassword;
+    }
+
+    // ✅ Новый метод для проверки старого пароля
+    async verifyPassword(id: number, oldPassword: string): Promise<boolean> {
+        const user = await this.usersRepository.findOne({ where: { id } });
+        if (!user) {
+            throw new NotFoundException(`Пользователь с id ${id} не найден`);
+        }
+
+        const isValid = await bcrypt.compare(oldPassword, user.password);
+        if (!isValid) {
+            throw new UnauthorizedException('Старый пароль неверный');
+        }
+
+        return true;
     }
 }

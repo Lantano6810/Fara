@@ -1,10 +1,14 @@
 import { useEffect, useState, forwardRef } from "react";
 import { useParams } from "react-router-dom";
-import DatePicker from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
+import { ru } from "date-fns/locale";
 import { FaCalendarAlt } from "react-icons/fa";
 import Modal from "../components/Modal";
 import "react-datepicker/dist/react-datepicker.css";
 import "../styles/ServiceApplications.css";
+
+// 👇 Регистрируем русскую локаль
+registerLocale("ru", ru);
 
 interface Application {
     id: number;
@@ -137,11 +141,12 @@ const ServiceApplications = () => {
 
             <div className="date-limit-box">
                 <DatePicker
+                    locale="ru"
                     selected={selectedDate}
                     onChange={(date: Date | null) => {
                         if (date) setSelectedDate(date);
                     }}
-                    dateFormat="yyyy-MM-dd"
+                    dateFormat="dd MMMM yyyy"
                     customInput={<CustomDateInput />}
                 />
 
@@ -182,7 +187,7 @@ const ServiceApplications = () => {
                             </tbody>
                         </table>
                     ) : (
-                        <p>На выбранную дату записей нет.</p>
+                        <p>На выбранную дату записей нет. Вы можете записаться на обсуживание в сервис!</p>
                     )}
                 </div>
             )}

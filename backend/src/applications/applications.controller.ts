@@ -21,24 +21,29 @@ export class ApplicationsController {
         return this.applicationsService.findAll();
     }
 
+    // ✅ Добавляем этот маршрут перед :id
+    @Get('user/:userId')
+    getByUser(@Param('userId') userId: string) {
+        return this.applicationsService.findByUserId(Number(userId));
+    }
+
+    @Get('service/:serviceId')
+    getByService(@Param('serviceId') serviceId: string) {
+        return this.applicationsService.findByServiceId(Number(serviceId));
+    }
+
     @Get(':id')
     findOne(@Param('id') id: string) {
-        return this.applicationsService.findOne(Number(id)); // ✅ Преобразуем id в число
+        return this.applicationsService.findOne(Number(id));
     }
 
     @Patch(':id')
     update(@Param('id') id: string, @Body() updateApplicationDto: UpdateApplicationDto) {
-        return this.applicationsService.update(Number(id), updateApplicationDto); // ✅ Преобразуем id в число
+        return this.applicationsService.update(Number(id), updateApplicationDto);
     }
 
     @Delete(':id')
     remove(@Param('id') id: string) {
-        return this.applicationsService.remove(Number(id)); // ✅ Преобразуем id в число
-    }
-
-    // ✅ Новый маршрут для получения заявок по ID сервиса
-    @Get('service/:serviceId')
-    getByService(@Param('serviceId') serviceId: string) {
-        return this.applicationsService.findByServiceId(Number(serviceId));
+        return this.applicationsService.remove(Number(id));
     }
 }
