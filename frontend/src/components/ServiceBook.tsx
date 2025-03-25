@@ -27,6 +27,8 @@ const statusMap: Record<string, string> = {
     canceled: "Отменена",
 };
 
+const canBeCanceled = (status: string) => status === "pending" || status === "approved";
+
 const ServiceBook: React.FC = () => {
     const userId = localStorage.getItem("user_id");
     const [applications, setApplications] = useState<Application[]>([]);
@@ -117,6 +119,29 @@ const ServiceBook: React.FC = () => {
             setEditingId(null);
         } catch (err: any) {
             alert(err.message || "Ошибка при сохранении");
+        }
+    };
+
+    const handleCancelApplication = async (app: Application) => {
+        const confirmed = window.confirm(`Вы уверены, что хотите отменить запись в "${app.service?.service_name}" на ${new Date(app.appointment_date).toLocaleDateString("ru-RU")}?`);
+        if (!confirmed) return;
+
+        try {
+            const res = await fetch(`http://localhost:3001/applications/${app.id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ status: "canceled" }),
+            });
+
+            if (!res.ok) throw new Error("Ошибка при отмене");
+
+            setApplications((prev) =>
+                prev.map((a) => (a.id === app.id ? { ...a, status: "canceled" } : a))
+            );
+        } catch (err: any) {
+            alert(err.message || "Ошибка при отмене");
         }
     };
 
@@ -223,9 +248,16 @@ const ServiceBook: React.FC = () => {
                                                     </p>
 
                                                     {!isEditing ? (
-                                                        <button onClick={() => startEditing(app)} className="edit-btn">
-                                                            Редактировать
-                                                        </button>
+                                                        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                                                            <button onClick={() => startEditing(app)} className="edit-btn">
+                                                                Редактировать
+                                                            </button>
+                                                            {canBeCanceled(app.status) && (
+                                                                <button onClick={() => handleCancelApplication(app)} className="edit-btn" style={{ backgroundColor: "#d9534f" }}>
+                                                                    Отменить запись
+                                                                </button>
+                                                            )}
+                                                        </div>
                                                     ) : (
                                                         <div className="button-group">
                                                             <button onClick={() => handleSave(app.id)}>Сохранить</button>

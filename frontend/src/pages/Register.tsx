@@ -1,7 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext"; // Импортируем контекст
-import Header from "../components/Header"; // ✅ Импортируем Header
 import AdOne from "../components/AdOne"; // ✅ Импортируем AdOne
 import "../styles/Login.css"; // Подключаем стили
 
@@ -87,7 +86,6 @@ const Register = () => {
 
     return (
         <>
-            <Header /> {/* ✅ Добавлен Header */}
             <div className="login-wrapper">
                 {/* ✅ Блок с текстами слева */}
                 <div className="login-text">
